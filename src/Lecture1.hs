@@ -50,7 +50,7 @@ Explanation: @sumOfSquares 3 4@ should be equal to @9 + 16@ and this
 is 25.
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-sumOfSquares x y = error "TODO!"
+sumOfSquares x y = x**2 + y**2
 
 {- | Implement a function that returns the last digit of a given number.
 
@@ -63,7 +63,7 @@ sumOfSquares x y = error "TODO!"
 
 -}
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
-lastDigit n = error "lastDigit: Not implemented!"
+lastDigit n = mod (abs(n)) 10
 
 {- | Write a function that takes three numbers and returns the
 difference between the biggest number and the smallest one.
@@ -77,7 +77,7 @@ and 1 is the smallest, and 7 - 1 = 6.
 Try to use local variables (either let-in or where) to implement this
 function.
 -}
-minmax x y z = error "TODO"
+minmax x y z = max (max x y) z  - min (min x y) z
 
 {- | Implement a function that takes a string, start and end positions
 and returns a substring of a given string from the start position to
@@ -94,7 +94,12 @@ start position can be considered as zero (e.g. substring from the
 first character) and negative end position should result in an empty
 string.
 -}
-subString start end str = error "TODO"
+subString start end str 
+    |  start < 0 =  subStr 0 end str
+    |  end < 0 = ""
+    |  otherwise = subStr start end str
+        where subStr start end str = reverse (drop (length str - end - 1) (reverse (drop start str)))
+
 
 {- | Write a function that takes a String — space separated numbers,
 and finds a sum of the numbers inside this string.
@@ -104,7 +109,8 @@ and finds a sum of the numbers inside this string.
 
 The string contains only spaces and/or numbers.
 -}
-strSum str = error "TODO"
+strSum str = sum $ map (\x -> read x :: Int) $ words str
+                              
 
 {- | Write a function that takes a number and a list of numbers and
 returns a string, saying how many elements of the list are strictly
@@ -119,4 +125,22 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 
 🕯 HINT: Use recursion to implement this function.
 -}
-lowerAndGreater n list = error "TODO"
+lowerAndGreater :: Int -> [Int] -> String
+lowerAndGreater n list
+    | null list = printResult n 0 0 
+    | otherwise = calc n 0 0 list
+            where calc number minCount maxCount l =
+                    if null l 
+                        then printResult number minCount maxCount
+                        else 
+                            if head l < number
+                            then calc number (minCount+1) maxCount $ tail l
+                            else 
+                                if head l > number
+                                then calc number minCount (maxCount + 1) $tail l
+                                else calc number minCount maxCount       $tail l
+
+printResult :: Int -> Int -> Int -> String
+printResult number minCount maxCount =  show number ++ " is greater than " 
+                                        ++ show minCount ++ " elements and lower than " 
+                                        ++ show maxCount ++ " elements"
